@@ -1,7 +1,5 @@
 setup:
-	gradle wrapper --gradle-version 7.5
-
-.DEFAULT_GOAL := build-run
+	gradle wrapper --gradle-version 7.3
 
 clean:
 	./gradlew clean
@@ -16,7 +14,7 @@ start-prod:
 	./gradlew bootRun --args='--spring.profiles.active=prod'
 
 install:
-	./gradlew clean installDist
+	./gradlew installDist
 
 run-dist:
 	./build/install/app/bin/app
@@ -44,7 +42,5 @@ db-migrate:
 
 check-updates:
 	./gradlew dependencyUpdates
-
-build-run: build run
 
 .PHONY: build
