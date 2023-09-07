@@ -1,3 +1,6 @@
+setup:
+    gradle wrapper --gradle-version 7.3
+
 .DEFAULT_GOAL := build-run
 
 clean:
@@ -41,9 +44,6 @@ db-migrate:
 
 check-updates:
 	./gradlew dependencyUpdates
-
-setup:
-	gradle wrapper --gradle-version 8.3
 
 build-run: build run
 
