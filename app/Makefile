@@ -14,7 +14,7 @@ start-prod:
 	./gradlew bootRun --args='--spring.profiles.active=prod'
 
 install:
-	./gradlew installDist
+	./gradlew install
 
 run-dist:
 	./build/install/app/bin/app
