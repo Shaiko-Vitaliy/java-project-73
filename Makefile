@@ -1,34 +1,46 @@
 setup:
-	make -C app setup
+	gradle wrapper --gradle-version 7.3
 
 clean:
-	make -C app clean
+	./gradlew clean
 
 build:
-	make -C app build
+	./gradlew clean build
 
 start:
-	make -C app start
+	./gradlew bootRun --args='--spring.profiles.active=dev'
+
+start-prod:
+	./gradlew bootRun --args='--spring.profiles.active=prod'
 
 install:
-	make -C app install
+	./gradlew install
 
-start-dist:
-	make -C app start-dist
+run-dist:
+	./build/install/app/bin/app
 
-generate-migrations:
-	make -C app generate-migrations
-
-lint:
-	make -C app lint
+run:
+	./gradlew run
 
 test:
-	make -C app test
+	./gradlew test
 
 report:
-	make -C app report
+	./gradlew jacocoTestReport
+
+lint:
+	./gradlew checkstyleMain checkstyleTest
+
+update-deps:
+	./gradlew useLatestVersions
+
+generate-migrations:
+	gradle diffChangeLog
+
+db-migrate:
+	./gradlew update
 
 check-updates:
-	make -C app check-updates
+	./gradlew dependencyUpdates
 
 .PHONY: build
