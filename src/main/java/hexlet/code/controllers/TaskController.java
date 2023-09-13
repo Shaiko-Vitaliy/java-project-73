@@ -41,11 +41,10 @@ public class TaskController {
     private final TaskRepository taskRepository;
 
     @Operation(summary = "Create new task")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Task has been created",
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Task has been created",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Task.class))}),
-            @ApiResponse(responseCode = "404", description = "Task not found")})
+        @ApiResponse(responseCode = "404", description = "Task not found")})
     @ResponseStatus(CREATED)
     @PostMapping()
     public Task createNewTask(@RequestBody TaskDto taskDto) {
@@ -61,31 +60,28 @@ public class TaskController {
     }
 
     @Operation(summary = "Get task by id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "The task is found",
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "The task is found",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Task.class))}),
-            @ApiResponse(responseCode = "404", description = "No such task found")})
+        @ApiResponse(responseCode = "404", description = "No such task found")})
     @GetMapping(path = ID)
     public Task getTaskById(@PathVariable Long id) {
         return taskService.getTaskById(id);
     }
 
     @Operation(summary = "Update the task by id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "The task is successfully updated",
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "The task is successfully updated",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Task.class))}),
-            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content)})
+        @ApiResponse(responseCode = "400", description = "Bad request", content = @Content)})
     @PutMapping(path = ID)
     public Task updateTask(@PathVariable(name = "id") Long id, @RequestBody TaskDto taskDto) {
         return taskService.updateTask(id, taskDto);
     }
 
     @Operation(summary = "Delete the task by id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "The task has been successfully deleted"),
-            @ApiResponse(responseCode = "404", description = "The task is not found", content = @Content)})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "The task has been successfully deleted"),
+        @ApiResponse(responseCode = "404", description = "The task is not found", content = @Content)})
     @PreAuthorize(OWNER)
     @DeleteMapping(path = ID)
     public void deleteTask(@PathVariable(name = "id") Long id) {

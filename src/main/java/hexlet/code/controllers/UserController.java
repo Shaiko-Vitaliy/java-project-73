@@ -41,10 +41,9 @@ public class UserController {
 
 
     @Operation(summary = "Get user by id")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Information retrieved",
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Information retrieved",
                     content = @Content(schema = @Schema(implementation = User.class))),
-            @ApiResponse(responseCode = "404", description = "User not found")})
+        @ApiResponse(responseCode = "404", description = "User not found")})
     @GetMapping(path = ID)
     public User getUser(@PathVariable long id) {
         return userService.getUserById(id);
@@ -52,8 +51,8 @@ public class UserController {
 
     @Operation(summary = "Get list of Users")
     @ApiResponses(@ApiResponse(responseCode = "200", content =
-    @Content(schema = @Schema(implementation = User.class))
-    ))
+        @Content(schema = @Schema(implementation = User.class))
+        ))
     @GetMapping
     public List<User> getAllUsers() {
         return userService.getUsers();
@@ -68,11 +67,10 @@ public class UserController {
     }
 
     @Operation(summary = "Update user")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "User updated",
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "User updated",
                     content = @Content(schema = @Schema(implementation = User.class))),
-            @ApiResponse(responseCode = "404", description = "User not found"),
-            @ApiResponse(responseCode = "422", description = "Incorrect user data")})
+        @ApiResponse(responseCode = "404", description = "User not found"),
+        @ApiResponse(responseCode = "422", description = "Incorrect user data")})
     @PreAuthorize(OWNER)
     @PutMapping(path = ID)
     public User updateUser(@PathVariable long id, @RequestBody @Valid final UserDto userDto) throws Exception {
@@ -80,11 +78,10 @@ public class UserController {
     }
 
     @Operation(summary = "Delete user")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "User deleted",
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "User deleted",
                     content = @Content(schema = @Schema(implementation = User.class))),
-            @ApiResponse(responseCode = "404", description = "User not found"),
-            @ApiResponse(responseCode = "422", description = "User is connected to at least one task")})
+        @ApiResponse(responseCode = "404", description = "User not found"),
+        @ApiResponse(responseCode = "422", description = "User is connected to at least one task")})
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize(OWNER)
     @DeleteMapping(path = ID)

@@ -48,8 +48,8 @@ public class LabelController {
 
     @Operation(summary = "Get all labels")
     @ApiResponses(@ApiResponse(responseCode = "200", content =
-    @Content(schema = @Schema(implementation = Label.class))
-    ))
+        @Content(schema = @Schema(implementation = Label.class))
+        ))
     @GetMapping
     public List<Label> getAll() {
         return labelService.getAll();
@@ -63,11 +63,10 @@ public class LabelController {
     }
 
     @Operation(summary = "Update a label")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Label updated",
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Label updated",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Label.class))}),
-            @ApiResponse(responseCode = "404", description = "Label with that id not found")
+        @ApiResponse(responseCode = "404", description = "Label with that id not found")
     })
     @PutMapping(ID)
     public Label update(@PathVariable final long id, @RequestBody final LabelDto labelDto) {
@@ -75,9 +74,8 @@ public class LabelController {
     }
 
     @Operation(summary = "Delete a label")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Label deleted"),
-            @ApiResponse(responseCode = "404", description = "Label with that id not found")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Label deleted"),
+        @ApiResponse(responseCode = "404", description = "Label with that id not found")
     })
     @DeleteMapping(ID)
     public void delete(@PathVariable final long id) {
