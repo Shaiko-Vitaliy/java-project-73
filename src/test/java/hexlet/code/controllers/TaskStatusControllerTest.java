@@ -5,6 +5,7 @@ import hexlet.code.utils.TestUtils;
 import hexlet.code.dto.TaskStatusDto;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.model.TaskStatus;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +32,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-//@ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
-//@SpringBootTest(webEnvironment = RANDOM_PORT, classes = SpringConfigTests.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Transactional
 public class TaskStatusControllerTest {
@@ -51,9 +50,13 @@ public class TaskStatusControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @BeforeEach
+    public void create() {
+        utils.regDefaultStatus();
+    }
+
     @Test
     public void getStatusByIdTest() throws Exception {
-        utils.regDefaultStatus();
         TaskStatus expectedStatus = statusRepository.findAll().get(0);
 
         final var response = mockMvc.perform(
@@ -72,7 +75,6 @@ public class TaskStatusControllerTest {
 
     @Test
     public void getStatuses() throws Exception {
-        utils.regDefaultStatus();
         final List<TaskStatus> expected = statusRepository.findAll();
         final var response = mockMvc.perform(
                         get(baseUrl + TASK_STATUS_PATH)
@@ -90,6 +92,7 @@ public class TaskStatusControllerTest {
 
     @Test
     public void createStatusTest() throws Exception {
+        statusRepository.deleteAll();
         utils.regDefaultUsers();
         TaskStatusDto status = TaskStatusDto.builder().name("To do").build();
 
@@ -108,9 +111,6 @@ public class TaskStatusControllerTest {
 
     @Test
     public void updateStatusTest() throws Exception {
-        utils.regDefaultStatus();
-
-
         TaskStatusDto status = new TaskStatusDto("ToDo2");
 
         final var response = mockMvc.perform(
@@ -127,8 +127,6 @@ public class TaskStatusControllerTest {
 
     @Test
     public void deleteStatusTest() throws Exception {
-        utils.regDefaultStatus();
-
         final var response = mockMvc.perform(
                         delete(baseUrl + TASK_STATUS_PATH + "/{id}", statusRepository.findAll().get(0).getId())
                                 .header(AUTHORIZATION, utils.generateToken()))

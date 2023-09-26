@@ -31,10 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-//@ActiveProfiles(TEST_PROFILE)
-//@ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
-//@SpringBootTest(webEnvironment = RANDOM_PORT, classes = SpringConfigTests.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Transactional
 public class LabelControllerTest {
@@ -50,6 +47,7 @@ public class LabelControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
 
     @Test
     public void getLabelByIdTest() throws Exception {
@@ -108,10 +106,7 @@ public class LabelControllerTest {
     @Test
     public void updateUserTest() throws Exception {
         utils.regDefaultLabel();
-
-
         final var expectedLabel = new LabelDto("Label 1");
-
         final var response = mockMvc.perform(
                         put(baseUrl + LABEL_PATH + "/{id}", labelRepository.findAll().get(0).getId())
                                 .content(asJson(expectedLabel))

@@ -33,13 +33,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-//@ActiveProfiles(TEST_PROFILE)
-//@ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
-//@SpringBootTest(webEnvironment = RANDOM_PORT, classes = SpringConfigTests.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Transactional
 //@WebMvcTest(UserController.class)
+//@DBRider
 public class UserControllerTest {
 
     private static final String TEST_EMAIL = "qwecvbngh65@ervbeb.ru";
@@ -69,7 +67,6 @@ public class UserControllerTest {
 
     @Test
     public void getUserByIdTest() throws Exception {
-//        utils.regDefaultUsers();
         final User expectedUser = userRepository.findAll().get(0);
         final var response = mockMvc.perform(
                         get(baseUrl + USER_CONTROLLER_PATH + "/{id}", expectedUser.getId())
@@ -89,7 +86,6 @@ public class UserControllerTest {
 
     @Test
     public void getUsersTest() throws Exception {
-//        utils.regDefaultUsers();
         final List<User> expectedUsers = userRepository.findAll();
         final var response = mockMvc.perform(
                         get(baseUrl + USER_CONTROLLER_PATH)
@@ -131,9 +127,6 @@ public class UserControllerTest {
 
     @Test
     public void updateUserTest() throws Exception {
-//        utils.regDefaultUsers();
-
-
         final var expectedUser = UserDto.builder()
                 .email(TEST_EMAIL)
                 .firstName("fnameNew")
@@ -156,8 +149,6 @@ public class UserControllerTest {
 
     @Test
     public void deleteUser() throws Exception {
-//        utils.regDefaultUsers();
-
         final var response = mockMvc.perform(
                         delete(baseUrl + USER_CONTROLLER_PATH + "/{id}", userRepository.findAll().get(0).getId())
                                 .header(AUTHORIZATION, utils.generateToken()))

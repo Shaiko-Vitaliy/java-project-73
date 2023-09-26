@@ -3,10 +3,7 @@ package hexlet.code.controllers;
 import com.fasterxml.jackson.core.type.TypeReference;
 import hexlet.code.utils.TestUtils;
 import hexlet.code.dto.TaskDto;
-import hexlet.code.repository.LabelRepository;
-import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.repository.TaskRepository;
-import hexlet.code.repository.UserRepository;
 import hexlet.code.model.Task;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,10 +32,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-//@ActiveProfiles(TEST_PROFILE)
-//@ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
-//@SpringBootTest(webEnvironment = RANDOM_PORT, classes = SpringConfigTests.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Transactional
 public class TaskControllerTest {
@@ -48,15 +42,6 @@ public class TaskControllerTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private TaskStatusRepository statusRepository;
-
-    @Autowired
-    private LabelRepository labelRepository;
 
     @Value("${base-url}")
     @Autowired
@@ -108,7 +93,6 @@ public class TaskControllerTest {
         assertEquals(expectedTasks.get(1).getDescription(), tasks.get(1).getDescription());
     }
 
-
     @Test
     public void createTaskTest() throws Exception {
         utils.regDefaultTask();
@@ -135,8 +119,6 @@ public class TaskControllerTest {
         String sql = "ALTER TABLE statuses ALTER COLUMN id RESTART WITH 1";
         jdbcTemplate.execute(sql);
         utils.regDefaultTask();
-
-
         final var expectedTask = TaskDto.builder()
                 .name("Task 1")
                 .description("Desc 1")
@@ -158,7 +140,6 @@ public class TaskControllerTest {
     @Test
     public void deleteTask() throws Exception {
         utils.regDefaultTask();
-
         final var response = mockMvc.perform(
                         delete(baseUrl + TASK_PATH + "/{id}", taskRepository.findAll().get(0).getId())
                                 .header(AUTHORIZATION, utils.generateToken()))
