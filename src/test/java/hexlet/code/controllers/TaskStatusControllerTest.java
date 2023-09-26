@@ -1,12 +1,10 @@
 package hexlet.code.controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import hexlet.code.config.SpringConfigTests;
 import hexlet.code.utils.TestUtils;
 import hexlet.code.dto.TaskStatusDto;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.model.TaskStatus;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +12,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static hexlet.code.config.SpringConfigTests.TEST_PROFILE;
 import static hexlet.code.utils.TestUtils.asJson;
 import static hexlet.code.utils.TestUtils.fromJson;
 import static hexlet.code.controllers.TaskStatusController.TASK_STATUS_PATH;
@@ -34,14 +31,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-@ActiveProfiles(TEST_PROFILE)
+//@ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = RANDOM_PORT, classes = SpringConfigTests.class)
+//@SpringBootTest(webEnvironment = RANDOM_PORT, classes = SpringConfigTests.class)
+@SpringBootTest(webEnvironment = RANDOM_PORT)
+@Transactional
 public class TaskStatusControllerTest {
 
     @Autowired
     private TaskStatusRepository statusRepository;
-
 
     @Value("${base-url}")
     @Autowired
@@ -52,11 +50,6 @@ public class TaskStatusControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @AfterEach
-    public void clear() {
-        utils.tearDown();
-    }
 
     @Test
     public void getStatusByIdTest() throws Exception {
@@ -145,5 +138,4 @@ public class TaskStatusControllerTest {
 
         assertEquals(statusRepository.findAll().size(), 1);
     }
-
 }

@@ -83,7 +83,8 @@ dependencies {
 			'org.springframework.boot:spring-boot-starter-security',
 			'org.springframework.security:spring-security-test',
 			'org.springframework.boot:spring-boot-starter-test',
-			'com.tobedevoured.modelcitizen:spring:0.8.3'
+			'com.tobedevoured.modelcitizen:spring:0.8.3',
+			'com.github.database-rider:rider-junit5:1.36.0'
 	)
 }
 

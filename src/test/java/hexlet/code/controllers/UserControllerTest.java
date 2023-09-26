@@ -1,12 +1,12 @@
 package hexlet.code.controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import hexlet.code.config.SpringConfigTests;
+import hexlet.code.service.UserService;
 import hexlet.code.utils.TestUtils;
 import hexlet.code.model.User;
 import hexlet.code.repository.UserRepository;
 import hexlet.code.dto.UserDto;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +14,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static hexlet.code.config.SpringConfigTests.TEST_PROFILE;
-import static hexlet.code.utils.TestUtils.TEST_EMAIL;
 import static hexlet.code.utils.TestUtils.asJson;
 import static hexlet.code.utils.TestUtils.fromJson;
 import static hexlet.code.controllers.UserController.USER_CONTROLLER_PATH;
@@ -35,31 +33,43 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-@ActiveProfiles(TEST_PROFILE)
+//@ActiveProfiles(TEST_PROFILE)
+//@ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = RANDOM_PORT, classes = SpringConfigTests.class)
+//@SpringBootTest(webEnvironment = RANDOM_PORT, classes = SpringConfigTests.class)
+@SpringBootTest(webEnvironment = RANDOM_PORT)
+@Transactional
+//@WebMvcTest(UserController.class)
 public class UserControllerTest {
+
+    private static final String TEST_EMAIL = "qwecvbngh65@ervbeb.ru";
     @Autowired
+//    @MockBean
     private UserRepository userRepository;
+
+//    @MockBean
+    @Autowired
+    private UserService userService;
 
     @Value("${base-url}")
     @Autowired
     private String baseUrl;
 
     @Autowired
+//    @MockBean
     private TestUtils utils;
 
     @Autowired
     private MockMvc mockMvc;
 
-    @AfterEach
-    public void clear() {
-        utils.tearDown();
+    @BeforeEach
+    public void create() {
+        utils.regDefaultUsers();
     }
 
     @Test
     public void getUserByIdTest() throws Exception {
-        utils.regDefaultUsers();
+//        utils.regDefaultUsers();
         final User expectedUser = userRepository.findAll().get(0);
         final var response = mockMvc.perform(
                         get(baseUrl + USER_CONTROLLER_PATH + "/{id}", expectedUser.getId())
@@ -79,7 +89,7 @@ public class UserControllerTest {
 
     @Test
     public void getUsersTest() throws Exception {
-        utils.regDefaultUsers();
+//        utils.regDefaultUsers();
         final List<User> expectedUsers = userRepository.findAll();
         final var response = mockMvc.perform(
                         get(baseUrl + USER_CONTROLLER_PATH)
@@ -99,6 +109,7 @@ public class UserControllerTest {
 
     @Test
     public void createUserTest() throws Exception {
+        userRepository.deleteAll();
         final var user = UserDto.builder()
                 .email(TEST_EMAIL)
                 .firstName("fname")
@@ -120,7 +131,7 @@ public class UserControllerTest {
 
     @Test
     public void updateUserTest() throws Exception {
-        utils.regDefaultUsers();
+//        utils.regDefaultUsers();
 
 
         final var expectedUser = UserDto.builder()
@@ -145,7 +156,7 @@ public class UserControllerTest {
 
     @Test
     public void deleteUser() throws Exception {
-        utils.regDefaultUsers();
+//        utils.regDefaultUsers();
 
         final var response = mockMvc.perform(
                         delete(baseUrl + USER_CONTROLLER_PATH + "/{id}", userRepository.findAll().get(0).getId())

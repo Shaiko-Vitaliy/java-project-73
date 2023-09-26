@@ -13,7 +13,9 @@ import hexlet.code.model.TaskStatus;
 import hexlet.code.model.Task;
 import hexlet.code.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.stereotype.Component;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -44,16 +46,14 @@ public class TestUtils {
     @Autowired
     private JWTHelper jwtHelper;
 
+    @TestConfiguration
+    @ActiveProfiles("test")
+    static class TestConfig {
+    }
+
     public String generateToken() {
         return jwtHelper.expiring(Map.of("username",
                 TEST_EMAIL, "password", "pwd123"));
-    }
-
-    public void tearDown() {
-        taskRepository.deleteAll();
-        userRepository.deleteAll();
-        statusRepository.deleteAll();
-        labelRepository.deleteAll();
     }
 
     public void regDefaultUsers() {

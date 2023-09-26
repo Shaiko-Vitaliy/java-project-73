@@ -1,7 +1,6 @@
 package hexlet.code.controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import hexlet.code.config.SpringConfigTests;
 import hexlet.code.utils.TestUtils;
 import hexlet.code.dto.TaskDto;
 import hexlet.code.repository.LabelRepository;
@@ -9,7 +8,6 @@ import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.repository.TaskRepository;
 import hexlet.code.repository.UserRepository;
 import hexlet.code.model.Task;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +16,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static hexlet.code.config.SpringConfigTests.TEST_PROFILE;
 import static hexlet.code.utils.TestUtils.asJson;
 import static hexlet.code.utils.TestUtils.fromJson;
 import static hexlet.code.controllers.TaskController.TASK_PATH;
@@ -38,9 +35,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-@ActiveProfiles(TEST_PROFILE)
+//@ActiveProfiles(TEST_PROFILE)
+//@ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = RANDOM_PORT, classes = SpringConfigTests.class)
+//@SpringBootTest(webEnvironment = RANDOM_PORT, classes = SpringConfigTests.class)
+@SpringBootTest(webEnvironment = RANDOM_PORT)
+@Transactional
 public class TaskControllerTest {
 
     @Autowired
@@ -67,11 +67,6 @@ public class TaskControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @AfterEach
-    public void clear() {
-        utils.tearDown();
-    }
 
     @Test
     public void getTaskByIdTest() throws Exception {
@@ -117,8 +112,6 @@ public class TaskControllerTest {
     @Test
     public void createTaskTest() throws Exception {
         utils.regDefaultTask();
-//        String qq = SecurityContextHolder.getContext().getAuthentication().getName();
-//        User autor = userRepository.findByEmail(qq).orElseThrow();
         final var task = TaskDto.builder()
                 .name("Task ")
                 .description("Description 2")
