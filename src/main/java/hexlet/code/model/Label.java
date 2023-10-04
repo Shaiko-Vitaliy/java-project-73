@@ -32,7 +32,6 @@ import static jakarta.persistence.TemporalType.TIMESTAMP;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-//@Builder
 public class Label {
     private static final int MIN = 1;
     @Id

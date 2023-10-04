@@ -46,11 +46,6 @@ public class UserServiceImp implements UserService {
         return userRepository.findById(id).orElseThrow();
     }
 
-//    @Override
-//    public User getUserById(Long id) {
-//        return userRepository.getReferenceById(id);
-//    }
-
     @Override
     public List<User> getUsers() {
         return userRepository.findAll();

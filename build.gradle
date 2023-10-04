@@ -18,7 +18,7 @@ sourceCompatibility = '20'
 targetCompatibility = 20
 
 application {
-	mainClass = 'hexlet.code.AppApplication'
+	mainClass = 'hexlet.code.Application'
 }
 
 repositories {
