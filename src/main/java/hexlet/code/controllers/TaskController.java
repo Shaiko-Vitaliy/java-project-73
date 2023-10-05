@@ -3,7 +3,6 @@ package hexlet.code.controllers;
 import com.querydsl.core.types.Predicate;
 import hexlet.code.dto.TaskDto;
 import hexlet.code.model.Task;
-import hexlet.code.repository.TaskRepository;
 import hexlet.code.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -37,8 +36,6 @@ public class TaskController {
     public static final String ID = "/{id}";
     @Autowired
     private final TaskService taskService;
-    @Autowired
-    private final TaskRepository taskRepository;
 
     @Operation(summary = "Create new task")
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Task has been created",
@@ -85,6 +82,6 @@ public class TaskController {
     @PreAuthorize(OWNER)
     @DeleteMapping(path = ID)
     public void deleteTask(@PathVariable(name = "id") Long id) {
-        taskRepository.deleteById(id);
+        taskService.deleteTask(id);
     }
 }

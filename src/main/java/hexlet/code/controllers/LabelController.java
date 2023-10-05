@@ -2,7 +2,6 @@ package hexlet.code.controllers;
 
 import hexlet.code.dto.LabelDto;
 import hexlet.code.model.Label;
-import hexlet.code.repository.LabelRepository;
 import hexlet.code.service.LabelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,8 +34,6 @@ public class LabelController {
     public static final String ID = "/{id}";
     @Autowired
     private final LabelService labelService;
-    @Autowired
-    private final LabelRepository labelRepository;
 
     @Operation(summary = "Create new label")
     @ApiResponse(responseCode = "201", description = "Label created")

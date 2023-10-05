@@ -39,7 +39,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-
     @Operation(summary = "Get user by id")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Information retrieved",
                     content = @Content(schema = @Schema(implementation = User.class))),

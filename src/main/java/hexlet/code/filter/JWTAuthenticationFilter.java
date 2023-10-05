@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-//public class JWTAuthenticationFilter extends OncePerRequestFilter {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private final JWTHelper jwtHelper;

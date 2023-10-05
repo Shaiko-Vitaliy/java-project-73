@@ -30,7 +30,6 @@ compileJava {
 	options.encoding = 'UTF-8'
 }
 
-
 wrapper {
 	gradleVersion = '8.3'
 	distributionType = Wrapper.DistributionType.ALL
@@ -97,23 +96,14 @@ diffChangelog {
 	dependsOn compileJava
 }
 
-// Настраиваем Liquibase
 liquibase {
 	activities {
 		main {
 			changeLogFile 'src/main/resources/db/changelog/db.changelog-master.yaml'
 			url 'jdbc:h2:./taskManager'
 			referenceUrl 'hibernate:spring:hexlet.code.model.' +
-					// Указываем диалект
 					'?dialect=org.hibernate.dialect.H2Dialect' +
-					// Указываем правила именования таблиц и столбцов,
-					// чтобы они соответствовали правилам Spring
 					'&hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy'
-//			username 'sa'
-//			password ''
-//			referenceUrl 'hibernate:spring:exercise.model' +
-//					'?dialect=org.hibernate.dialect.H2Dialect' +
-//					'&hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy'
 		}
 	}
 }
