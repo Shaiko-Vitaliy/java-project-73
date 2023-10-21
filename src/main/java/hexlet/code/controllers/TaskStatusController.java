@@ -52,7 +52,7 @@ public class TaskStatusController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteStatus(@PathVariable("id") Long id) {
+    public void deleteStatus(@PathVariable("id") Long id) throws Exception {
         statusService.deleteStatus(id);
     }
 }

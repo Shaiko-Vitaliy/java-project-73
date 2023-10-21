@@ -1,7 +1,9 @@
 package hexlet.code.service;
 
 import hexlet.code.dto.LabelDto;
+import hexlet.code.exception.DataException;
 import hexlet.code.model.Label;
+import hexlet.code.model.Task;
 import hexlet.code.repository.LabelRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +33,14 @@ public class LabelServiceImpl implements LabelService {
     }
 
     @Override
-    public void deletelabel(Long id) {
-        labelRepository.deleteById(id);
+    public void deletelabel(Long id) throws DataException {
+        Label label = labelRepository.findById(id).orElseThrow();
+        List<Task> listOfTasks = label.getTasks();
+        if (listOfTasks == null || listOfTasks.isEmpty()) {
+            labelRepository.deleteById(id);
+        } else {
+            throw new DataException("The label is associated with the task! Cannot be deleted! ");
+        }
     }
 
     @Override

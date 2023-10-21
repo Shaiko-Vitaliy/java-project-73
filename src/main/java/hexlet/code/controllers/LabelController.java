@@ -70,12 +70,15 @@ public class LabelController {
         return labelService.updateLabel(id, labelDto);
     }
 
-    @Operation(summary = "Delete a label")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Label deleted"),
+    @Operation(summary = "Delete current Label")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Label deleted"),
+        @ApiResponse(responseCode = "422", description = "Label cannot be deleted while it using"),
+        @ApiResponse(responseCode = "401", description = "Not authenticated request"),
         @ApiResponse(responseCode = "404", description = "Label with that id not found")
     })
     @DeleteMapping(ID)
-    public void delete(@PathVariable final long id) {
+    public void delete(@PathVariable final long id) throws Exception {
         labelService.deletelabel(id);
     }
 

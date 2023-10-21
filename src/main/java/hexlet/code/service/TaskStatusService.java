@@ -1,5 +1,6 @@
 package hexlet.code.service;
 
+import hexlet.code.exception.DataException;
 import hexlet.code.model.TaskStatus;
 import hexlet.code.dto.TaskStatusDto;
 
@@ -14,5 +15,5 @@ public interface TaskStatusService {
 
     TaskStatus updateStatus(TaskStatusDto taskStatusDto, Long id);
 
-    void deleteStatus(Long id);
+    void deleteStatus(Long id) throws DataException;
 }

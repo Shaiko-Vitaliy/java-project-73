@@ -84,7 +84,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize(OWNER)
     @DeleteMapping(path = ID)
-    public void deleteUser(@PathVariable long id) {
+    public void deleteUser(@PathVariable long id) throws Exception {
         userService.deleteUser(id);
     }
 }

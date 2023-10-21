@@ -58,6 +58,7 @@ public class Task {
     private User author;
 
     @ManyToOne
+    @JoinColumn(name = "executor_id", referencedColumnName = "id")
     private User executor;
 
     @CreationTimestamp
