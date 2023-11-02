@@ -1,12 +1,9 @@
 package hexlet.code.service;
 
 import hexlet.code.dto.LabelDto;
-import hexlet.code.exception.DataException;
 import hexlet.code.model.Label;
-import hexlet.code.model.Task;
 import hexlet.code.repository.LabelRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,7 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 public class LabelServiceImpl implements LabelService {
 
-    @Autowired
     private final LabelRepository labelRepository;
 
     @Override
@@ -26,21 +22,15 @@ public class LabelServiceImpl implements LabelService {
     }
 
     @Override
-    public Label updateLabel(long id, LabelDto labelDto) {
+    public Label updateLabel(long id, LabelDto labelDto)  {
         Label labelToUpdate = labelRepository.findById(id);
         labelToUpdate.setName(labelDto.getName());
         return labelRepository.save(labelToUpdate);
     }
 
     @Override
-    public void deletelabel(Long id) throws DataException {
-        Label label = labelRepository.findById(id).orElseThrow();
-        List<Task> listOfTasks = label.getTasks();
-        if (listOfTasks == null || listOfTasks.isEmpty()) {
-            labelRepository.deleteById(id);
-        } else {
-            throw new DataException("The label is associated with the task! Cannot be deleted! ");
-        }
+    public void deletelabel(Long id) {
+        labelRepository.deleteById(id);
     }
 
     @Override
@@ -50,7 +40,7 @@ public class LabelServiceImpl implements LabelService {
 
     @Override
     public Label getLabelById(Long id) {
-        return  labelRepository.findById(id).orElseThrow();
+        return labelRepository.findById(id).orElseThrow();
     }
 
     @Override

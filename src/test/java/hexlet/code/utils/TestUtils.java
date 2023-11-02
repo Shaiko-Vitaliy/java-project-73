@@ -18,8 +18,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 @Component
@@ -80,7 +80,7 @@ public class TestUtils {
         regDefaultTask();
         labelRepository.save(label1);
         labelRepository.save(label2);
-        taskRepository.findAll().get(0).setLabels(List.of(label1, label2));
+        taskRepository.findAll().get(0).setLabels(Set.of(label1, label2));
     }
 
     public void regDefaultTask() {

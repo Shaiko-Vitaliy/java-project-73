@@ -23,6 +23,7 @@ import static hexlet.code.utils.TestUtils.asJson;
 import static hexlet.code.utils.TestUtils.fromJson;
 import static hexlet.code.controllers.TaskStatusController.TASK_STATUS_PATH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -104,6 +105,7 @@ public class TaskStatusControllerTest {
                 .andExpect(status().isCreated())
                 .andReturn()
                 .getResponse();
+        final TaskStatus taskStatusCreate = statusRepository.findById(1);
 
         assertEquals(statusRepository.findAll().size(), 1);
         assertEquals(statusRepository.findAll().get(0).getName(), "To do");
@@ -112,9 +114,10 @@ public class TaskStatusControllerTest {
     @Test
     public void updateStatusTest() throws Exception {
         TaskStatusDto status = new TaskStatusDto("ToDo2");
+        final long id = statusRepository.findAll().get(0).getId();
 
         final var response = mockMvc.perform(
-                        put(baseUrl + TASK_STATUS_PATH + "/{id}", statusRepository.findAll().get(0).getId())
+                        put(baseUrl + TASK_STATUS_PATH + "/{id}", id)
                                 .content(asJson(status))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header(AUTHORIZATION, utils.generateToken()))
@@ -122,18 +125,22 @@ public class TaskStatusControllerTest {
                 .andReturn()
                 .getResponse();
 
-        assertEquals(status.getName(), statusRepository.findAll().get(0).getName());
+        final TaskStatus taskStatusUpdate = statusRepository.findById(id);
+
+        assertEquals(status.getName(), taskStatusUpdate.getName());
     }
 
     @Test
     public void deleteStatusTest() throws Exception {
+        final long id = statusRepository.findAll().get(0).getId();
         final var response = mockMvc.perform(
-                        delete(baseUrl + TASK_STATUS_PATH + "/{id}", statusRepository.findAll().get(0).getId())
+                        delete(baseUrl + TASK_STATUS_PATH + "/{id}", id)
                                 .header(AUTHORIZATION, utils.generateToken()))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
 
         assertEquals(statusRepository.findAll().size(), 1);
+        assertFalse(statusRepository.existsById(id));
     }
 }

@@ -13,8 +13,6 @@ import java.util.List;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,8 +34,7 @@ public class UserController {
     public static final String USER_CONTROLLER_PATH = "/users";
     private static final String OWNER = "@userRepository.findById(#id).get().getEmail() == authentication.getName()";
     public static final String ID = "/{id}";
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @Operation(summary = "Get user by id")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Information retrieved",
@@ -61,30 +58,31 @@ public class UserController {
     @ApiResponse(responseCode = "201", description = "User created")
     @PostMapping
     @ResponseStatus(CREATED)
-    public User registerNew(@RequestBody @Valid final UserDto userDto) throws Exception {
+    public User registerNew(@RequestBody @Valid final UserDto userDto) {
         return userService.createUser(userDto);
     }
 
-    @Operation(summary = "Update user")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "User updated",
-                    content = @Content(schema = @Schema(implementation = User.class))),
-        @ApiResponse(responseCode = "404", description = "User not found"),
-        @ApiResponse(responseCode = "422", description = "Incorrect user data")})
+    @Operation(summary = "Update a user by id")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "The user is updated",
+                content = {@Content(mediaType = "application/json",
+                        schema = @Schema(implementation = User.class))}),
+        @ApiResponse(responseCode = "404", description = "The user is not found",
+                content = @Content),
+        @ApiResponse(responseCode = "403", description = "Forbidden to update",
+                content = @Content),
+        @ApiResponse(responseCode = "422", description = "Invalid request",
+                content = @Content)})
     @PreAuthorize(OWNER)
     @PutMapping(path = ID)
-    public User updateUser(@PathVariable long id, @RequestBody @Valid final UserDto userDto) throws Exception {
+    public User updateUser(@PathVariable long id, @RequestBody @Valid final UserDto userDto) {
         return userService.updateUser(id, userDto);
     }
 
     @Operation(summary = "Delete user")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "User deleted",
-                    content = @Content(schema = @Schema(implementation = User.class))),
-        @ApiResponse(responseCode = "404", description = "User not found"),
-        @ApiResponse(responseCode = "422", description = "User is connected to at least one task")})
-    @ResponseStatus(HttpStatus.OK)
     @PreAuthorize(OWNER)
     @DeleteMapping(path = ID)
-    public void deleteUser(@PathVariable long id) throws Exception {
+    public void deleteUser(@PathVariable long id) {
         userService.deleteUser(id);
     }
 }

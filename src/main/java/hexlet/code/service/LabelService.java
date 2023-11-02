@@ -1,7 +1,6 @@
 package hexlet.code.service;
 
 import hexlet.code.dto.LabelDto;
-import hexlet.code.exception.DataException;
 import hexlet.code.model.Label;
 
 import java.util.List;
@@ -11,7 +10,7 @@ public interface LabelService {
 
     Label updateLabel(long id, LabelDto labelDto);
 
-    void deletelabel(Long id) throws DataException;
+    void deletelabel(Long id);
 
     List<Label> getAll();
 

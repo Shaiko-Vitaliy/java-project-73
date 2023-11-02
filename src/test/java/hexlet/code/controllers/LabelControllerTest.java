@@ -22,6 +22,7 @@ import static hexlet.code.utils.TestUtils.asJson;
 import static hexlet.code.utils.TestUtils.fromJson;
 import static hexlet.code.controllers.LabelController.LABEL_PATH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -89,7 +90,6 @@ public class LabelControllerTest {
     @Test
     public void createLabelTest() throws Exception {
         final var label = new LabelDto("Label 1");
-
         mockMvc.perform(post(baseUrl + LABEL_PATH)
                         .content(asJson(label))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -99,16 +99,18 @@ public class LabelControllerTest {
                 .andReturn()
                 .getResponse();
 
+        final Label expectedLabel = labelRepository.findAll().get(0);
         assertEquals(labelRepository.findAll().size(), 1);
-        assertEquals(labelRepository.findAll().get(0).getName(), "Label 1");
+        assertEquals(expectedLabel.getName(), label.getName());
     }
 
     @Test
-    public void updateUserTest() throws Exception {
+    public void updateLabelTest() throws Exception {
         utils.regDefaultLabel();
         final var expectedLabel = new LabelDto("Label 1");
+        final long id = labelRepository.findAll().get(0).getId();
         final var response = mockMvc.perform(
-                        put(baseUrl + LABEL_PATH + "/{id}", labelRepository.findAll().get(0).getId())
+                        put(baseUrl + LABEL_PATH + "/{id}", id)
                                 .content(asJson(expectedLabel))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header(AUTHORIZATION, utils.generateToken()))
@@ -116,7 +118,9 @@ public class LabelControllerTest {
                 .andReturn()
                 .getResponse();
 
-        assertEquals(expectedLabel.getName(), labelRepository.findAll().get(0).getName());
+        final Label updatedLabel = labelRepository.findById(id);
+
+        assertEquals(expectedLabel.getName(), updatedLabel.getName());
     }
 
     @Test
@@ -128,13 +132,15 @@ public class LabelControllerTest {
         label2.setName("A$AP");
         labelRepository.save(label2);
 
+        final long id = labelRepository.findAll().get(0).getId();
         final var response = mockMvc.perform(
-                        delete(baseUrl + LABEL_PATH + "/{id}", labelRepository.findAll().get(0).getId())
+                        delete(baseUrl + LABEL_PATH + "/{id}", id)
                                 .header(AUTHORIZATION, utils.generateToken()))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
 
         assertEquals(labelRepository.findAll().size(), 1);
+        assertFalse(labelRepository.existsById(id));
     }
 }

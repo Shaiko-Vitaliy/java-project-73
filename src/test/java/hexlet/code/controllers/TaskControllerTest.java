@@ -23,6 +23,7 @@ import static hexlet.code.utils.TestUtils.asJson;
 import static hexlet.code.utils.TestUtils.fromJson;
 import static hexlet.code.controllers.TaskController.TASK_PATH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -97,8 +98,8 @@ public class TaskControllerTest {
     public void createTaskTest() throws Exception {
         utils.regDefaultTask();
         final var task = TaskDto.builder()
-                .name("Task ")
-                .description("Description 2")
+                .name("Task Create")
+                .description("Description 3")
                 .taskStatusId(taskRepository.findAll().get(0).getTaskStatus().getId())
                 .build();
         mockMvc.perform(
@@ -109,23 +110,23 @@ public class TaskControllerTest {
                 .andExpect(status().isCreated())
                 .andReturn()
                 .getResponse();
-
+        final Task createTask = taskRepository.findByName("Task Create").get();
         assertEquals(taskRepository.findAll().size(), 3);
-        assertEquals(taskRepository.findAll().get(2).getDescription(), "Description 2");
+        assertEquals(createTask.getDescription(), "Description 3");
     }
 
     @Test
     public void updateTaskTest() throws Exception {
-        String sql = "ALTER TABLE statuses ALTER COLUMN id RESTART WITH 1";
-        jdbcTemplate.execute(sql);
         utils.regDefaultTask();
+        final long id = taskRepository.findAll().get(0).getId();
         final var expectedTask = TaskDto.builder()
                 .name("Task 1")
                 .description("Desc 1")
                 .taskStatusId(1L)
                 .build();
+
         mockMvc.perform(
-                        put(baseUrl + TASK_PATH + "/{id}", taskRepository.findAll().get(0).getId())
+                        put(baseUrl + TASK_PATH + "/{id}", id)
                                 .content(asJson(expectedTask))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header(AUTHORIZATION, utils.generateToken()))
@@ -133,20 +134,24 @@ public class TaskControllerTest {
                 .andReturn()
                 .getResponse();
 
-        assertEquals(expectedTask.getName(), taskRepository.findAll().get(0).getName());
-        assertEquals(expectedTask.getDescription(), taskRepository.findAll().get(0).getDescription());
+        final var updateTask = taskRepository.findById(id).get();
+
+        assertEquals(expectedTask.getName(), updateTask.getName());
+        assertEquals(expectedTask.getDescription(), updateTask.getDescription());
     }
 
     @Test
     public void deleteTask() throws Exception {
         utils.regDefaultTask();
+        final long id = taskRepository.findAll().get(0).getId();
         final var response = mockMvc.perform(
-                        delete(baseUrl + TASK_PATH + "/{id}", taskRepository.findAll().get(0).getId())
+                        delete(baseUrl + TASK_PATH + "/{id}", id)
                                 .header(AUTHORIZATION, utils.generateToken()))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
 
         assertEquals(taskRepository.findAll().size(), 1);
+        assertFalse(taskRepository.existsById(id));
     }
 }

@@ -6,7 +6,6 @@ import hexlet.code.model.TaskStatus;
 import hexlet.code.service.TaskStatusService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +25,6 @@ import static hexlet.code.controllers.TaskStatusController.TASK_STATUS_PATH;
 @RequestMapping("${base-url}" + TASK_STATUS_PATH)
 @AllArgsConstructor
 public class TaskStatusController {
-    @Autowired
     private final TaskStatusService statusService;
     public static final String TASK_STATUS_PATH = "/statuses";
 
@@ -52,7 +50,7 @@ public class TaskStatusController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteStatus(@PathVariable("id") Long id) throws Exception {
+    public void deleteStatus(@PathVariable("id") Long id) {
         statusService.deleteStatus(id);
     }
 }

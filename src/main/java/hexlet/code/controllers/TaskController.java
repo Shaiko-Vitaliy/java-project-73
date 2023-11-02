@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,7 +33,6 @@ public class TaskController {
     private static final String OWNER =
             "@taskRepository.findById(#id).get().getAuthor().getEmail() == authentication.getName()";
     public static final String ID = "/{id}";
-    @Autowired
     private final TaskService taskService;
 
     @Operation(summary = "Create new task")

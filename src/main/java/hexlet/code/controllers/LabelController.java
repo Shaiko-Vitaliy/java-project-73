@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,11 +31,13 @@ import static org.springframework.http.HttpStatus.CREATED;
 public class LabelController {
     public static final String LABEL_PATH = "/labels";
     public static final String ID = "/{id}";
-    @Autowired
     private final LabelService labelService;
 
     @Operation(summary = "Create new label")
-    @ApiResponse(responseCode = "201", description = "Label created")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Label created"),
+        @ApiResponse(responseCode = "422", description = "Name label can not be empty")
+    })
     @PostMapping
     @ResponseStatus(CREATED)
     public Label createNew(@RequestBody @Valid final LabelDto labelDto) {
@@ -63,20 +64,14 @@ public class LabelController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Label updated",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Label.class))}),
-        @ApiResponse(responseCode = "404", description = "Label with that id not found")
+        @ApiResponse(responseCode = "404", description = "Label with that id not found"),
+        @ApiResponse(responseCode = "422", description = "Name label can not be empty")
     })
     @PutMapping(ID)
     public Label update(@PathVariable final long id, @RequestBody final LabelDto labelDto) {
         return labelService.updateLabel(id, labelDto);
     }
 
-    @Operation(summary = "Delete current Label")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Label deleted"),
-        @ApiResponse(responseCode = "422", description = "Label cannot be deleted while it using"),
-        @ApiResponse(responseCode = "401", description = "Not authenticated request"),
-        @ApiResponse(responseCode = "404", description = "Label with that id not found")
-    })
     @DeleteMapping(ID)
     public void delete(@PathVariable final long id) throws Exception {
         labelService.deletelabel(id);

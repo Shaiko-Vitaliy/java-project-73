@@ -11,4 +11,5 @@ public interface LabelRepository extends JpaRepository<Label, Long> {
     Label findById(long id);
     @Override
     List<Label> findAllById(Iterable<Long> longs);
+
 }

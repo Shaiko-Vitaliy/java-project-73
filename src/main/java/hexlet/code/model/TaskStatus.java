@@ -1,9 +1,7 @@
 package hexlet.code.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -18,11 +16,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Fetch;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 import static jakarta.persistence.TemporalType.TIMESTAMP;
+import static org.hibernate.annotations.FetchMode.JOIN;
 
 @Entity
 @Getter
@@ -32,14 +32,13 @@ import static jakarta.persistence.TemporalType.TIMESTAMP;
 @Builder
 @Table(name = "statuses")
 public class TaskStatus {
-    private static final int MIN_LENGTH = 1;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     @NotBlank
-    @Size(min = MIN_LENGTH)
+    @Size(min = 1, max = 1000)
     private String name;
 
     @CreationTimestamp
@@ -47,10 +46,11 @@ public class TaskStatus {
     private Date createdAt;
 
     @JsonIgnore
-    @OneToMany(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
-            mappedBy = "taskStatus"
-    )
-    private List<Task> tasks;
+    @Fetch(JOIN)
+    @OneToMany
+    private Set<Task> tasks;
+
+    public TaskStatus(final Long id) {
+        this.id = id;
+    }
 }

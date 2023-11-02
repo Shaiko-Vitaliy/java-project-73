@@ -24,6 +24,7 @@ import static hexlet.code.utils.TestUtils.asJson;
 import static hexlet.code.utils.TestUtils.fromJson;
 import static hexlet.code.controllers.UserController.USER_CONTROLLER_PATH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -36,16 +37,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Transactional
-//@WebMvcTest(UserController.class)
-//@DBRider
 public class UserControllerTest {
 
     private static final String TEST_EMAIL = "qwecvbngh65@ervbeb.ru";
     @Autowired
-//    @MockBean
     private UserRepository userRepository;
 
-//    @MockBean
     @Autowired
     private UserService userService;
 
@@ -54,7 +51,6 @@ public class UserControllerTest {
     private String baseUrl;
 
     @Autowired
-//    @MockBean
     private TestUtils utils;
 
     @Autowired
@@ -133,9 +129,10 @@ public class UserControllerTest {
                 .lastName("lnameNew")
                 .password("pwd123New")
                 .build();
+        final long id = userRepository.findAll().get(0).getId();
 
         final var response = mockMvc.perform(
-                        put(baseUrl + USER_CONTROLLER_PATH + "/{id}", userRepository.findAll().get(0).getId())
+                        put(baseUrl + USER_CONTROLLER_PATH + "/{id}", id)
                                 .content(asJson(expectedUser))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header(AUTHORIZATION, utils.generateToken()))
@@ -143,19 +140,21 @@ public class UserControllerTest {
                 .andReturn()
                 .getResponse();
 
-        assertEquals(expectedUser.getFirstName(), userRepository.findAll().get(0).getFirstName());
-        assertEquals(expectedUser.getLastName(), userRepository.findAll().get(0).getLastName());
+        assertEquals(expectedUser.getFirstName(), userRepository.findById(id).get().getFirstName());
+        assertEquals(expectedUser.getLastName(), userRepository.findById(id).get().getLastName());
     }
 
     @Test
     public void deleteUser() throws Exception {
+        final long id = userRepository.findAll().get(0).getId();
         final var response = mockMvc.perform(
-                        delete(baseUrl + USER_CONTROLLER_PATH + "/{id}", userRepository.findAll().get(0).getId())
+                        delete(baseUrl + USER_CONTROLLER_PATH + "/{id}", id)
                                 .header(AUTHORIZATION, utils.generateToken()))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
 
         assertEquals(userRepository.findAll().size(), 1);
+        assertFalse(userRepository.existsById(id));
     }
 }
