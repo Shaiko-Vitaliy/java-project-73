@@ -1,5 +1,5 @@
 setup:
-	gradle wrapper --gradle-version 7.3
+	./gradlew wrapper --gradle-version 8.3
 
 clean:
 	./gradlew clean
@@ -35,7 +35,7 @@ update-deps:
 	./gradlew useLatestVersions
 
 generate-migrations:
-	gradle diffChangeLog
+	./gradlew diffChangeLog
 
 db-migrate:
 	./gradlew update
