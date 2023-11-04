@@ -1,7 +1,6 @@
 package hexlet.code.controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import hexlet.code.model.Task;
 import hexlet.code.utils.TestUtils;
 import hexlet.code.dto.TaskStatusDto;
 import hexlet.code.repository.TaskStatusRepository;

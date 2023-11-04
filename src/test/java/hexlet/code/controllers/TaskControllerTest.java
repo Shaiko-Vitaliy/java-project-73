@@ -1,9 +1,6 @@
 package hexlet.code.controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import hexlet.code.model.Label;
-import hexlet.code.model.TaskStatus;
-import hexlet.code.model.User;
 import hexlet.code.utils.TestUtils;
 import hexlet.code.dto.TaskDto;
 import hexlet.code.repository.TaskRepository;
@@ -22,9 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 
-import static hexlet.code.controllers.LabelController.LABEL_PATH;
 import static hexlet.code.utils.TestUtils.asJson;
 import static hexlet.code.utils.TestUtils.fromJson;
 import static hexlet.code.controllers.TaskController.TASK_PATH;
