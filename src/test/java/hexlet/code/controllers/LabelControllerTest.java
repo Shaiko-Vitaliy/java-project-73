@@ -5,6 +5,7 @@ import hexlet.code.utils.TestUtils;
 import hexlet.code.dto.LabelDto;
 import hexlet.code.repository.LabelRepository;
 import hexlet.code.model.Label;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import java.util.List;
 import static hexlet.code.utils.TestUtils.asJson;
 import static hexlet.code.utils.TestUtils.fromJson;
 import static hexlet.code.controllers.LabelController.LABEL_PATH;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -69,6 +71,23 @@ public class LabelControllerTest {
     }
 
     @Test
+    public void getAllTest() throws Exception {
+        utils.regDefaultLabel();
+        final var response = mockMvc.perform(
+                    get(baseUrl + LABEL_PATH)
+                        .header(AUTHORIZATION, utils.generateToken())
+                ).andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        final List<Label> labels = fromJson(response.getContentAsString(), new TypeReference<>() {
+        });
+        final List<Label> expected = labelRepository.findAll();
+        Assertions.assertThat(labels)
+                .containsAll(expected);
+    }
+
+    @Test
     public void getLabelsTest() throws Exception {
         utils.regDefaultLabel();
         final List<Label> expectedLabels = labelRepository.findAll();
@@ -90,7 +109,10 @@ public class LabelControllerTest {
     @Test
     public void createLabelTest() throws Exception {
         final var label = new LabelDto("Label 1");
-        mockMvc.perform(post(baseUrl + LABEL_PATH)
+
+//        final var request = buildRequestForSave(labelToSave);
+
+        final var response = mockMvc.perform(post(baseUrl + LABEL_PATH)
                         .content(asJson(label))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, utils.generateToken())
@@ -99,9 +121,12 @@ public class LabelControllerTest {
                 .andReturn()
                 .getResponse();
 
+        final Label savedLabel = fromJson(response.getContentAsString(), new TypeReference<>() {
+        });
         final Label expectedLabel = labelRepository.findAll().get(0);
         assertEquals(labelRepository.findAll().size(), 1);
         assertEquals(expectedLabel.getName(), label.getName());
+        assertThat(labelRepository.getReferenceById(savedLabel.getId())).isNotNull();
     }
 
     @Test
@@ -140,7 +165,6 @@ public class LabelControllerTest {
                 .andReturn()
                 .getResponse();
 
-        assertEquals(labelRepository.findAll().size(), 1);
         assertFalse(labelRepository.existsById(id));
     }
 }

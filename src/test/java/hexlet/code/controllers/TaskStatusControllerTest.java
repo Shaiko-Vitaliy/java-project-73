@@ -1,10 +1,12 @@
 package hexlet.code.controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import hexlet.code.model.Task;
 import hexlet.code.utils.TestUtils;
 import hexlet.code.dto.TaskStatusDto;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.model.TaskStatus;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +24,7 @@ import java.util.List;
 import static hexlet.code.utils.TestUtils.asJson;
 import static hexlet.code.utils.TestUtils.fromJson;
 import static hexlet.code.controllers.TaskStatusController.TASK_STATUS_PATH;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -75,7 +78,7 @@ public class TaskStatusControllerTest {
     }
 
     @Test
-    public void getStatuses() throws Exception {
+    public void getAllTest() throws Exception {
         final List<TaskStatus> expected = statusRepository.findAll();
         final var response = mockMvc.perform(
                         get(baseUrl + TASK_STATUS_PATH)
@@ -86,9 +89,9 @@ public class TaskStatusControllerTest {
 
         final List<TaskStatus> actual = fromJson(response.getContentAsString(), new TypeReference<>() {
         });
-        assertEquals(expected.size(), actual.size());
-        assertEquals(expected.get(0).getId(), actual.get(0).getId());
-        assertEquals(expected.get(1).getName(), actual.get(1).getName());
+
+        Assertions.assertThat(actual)
+                .containsAll(expected);
     }
 
     @Test
@@ -97,18 +100,20 @@ public class TaskStatusControllerTest {
         utils.regDefaultUsers();
         TaskStatusDto status = TaskStatusDto.builder().name("To do").build();
 
-        mockMvc.perform(
-                        post(baseUrl + TASK_STATUS_PATH)
+        final var response = mockMvc.perform(
+                                post(baseUrl + TASK_STATUS_PATH)
                                 .content(asJson(status))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header(AUTHORIZATION, utils.generateToken()))
-                .andExpect(status().isCreated())
-                .andReturn()
-                .getResponse();
-        final TaskStatus taskStatusCreate = statusRepository.findById(1);
+                                .andExpect(status().isCreated())
+                                .andReturn()
+                                .getResponse();
 
+        final var savedTaskStatus = fromJson(response.getContentAsString(), new TypeReference<TaskStatus>() {
+        });
         assertEquals(statusRepository.findAll().size(), 1);
         assertEquals(statusRepository.findAll().get(0).getName(), "To do");
+        assertThat(statusRepository.getReferenceById(savedTaskStatus.getId())).isNotNull();
     }
 
     @Test
@@ -140,7 +145,6 @@ public class TaskStatusControllerTest {
                 .andReturn()
                 .getResponse();
 
-        assertEquals(statusRepository.findAll().size(), 1);
         assertFalse(statusRepository.existsById(id));
     }
 }

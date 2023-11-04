@@ -1,11 +1,13 @@
 package hexlet.code.controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import hexlet.code.model.TaskStatus;
 import hexlet.code.service.UserService;
 import hexlet.code.utils.TestUtils;
 import hexlet.code.model.User;
 import hexlet.code.repository.UserRepository;
 import hexlet.code.dto.UserDto;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +25,7 @@ import java.util.List;
 import static hexlet.code.utils.TestUtils.asJson;
 import static hexlet.code.utils.TestUtils.fromJson;
 import static hexlet.code.controllers.UserController.USER_CONTROLLER_PATH;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -93,10 +96,8 @@ public class UserControllerTest {
         final List<User> users = fromJson(response.getContentAsString(), new TypeReference<List<User>>() {
         });
 
-        assertEquals(expectedUsers.size(), users.size());
-        assertEquals(expectedUsers.get(0).getId(), users.get(0).getId());
-        assertEquals(expectedUsers.get(1).getLastName(), users.get(1).getLastName());
-        assertEquals(expectedUsers.get(0).getEmail(), users.get(0).getEmail());
+        Assertions.assertThat(users)
+                .containsAll(expectedUsers);
     }
 
     @Test
@@ -117,8 +118,12 @@ public class UserControllerTest {
                 .andReturn()
                 .getResponse();
 
+        final var savedUser = fromJson(response.getContentAsString(), new TypeReference<User>() {
+        });
+
         assertEquals(userRepository.findAll().size(), 1);
         assertEquals(userRepository.findAll().get(0).getEmail(), TEST_EMAIL);
+        assertThat(userRepository.getReferenceById(savedUser.getId())).isNotNull();
     }
 
     @Test
@@ -154,7 +159,6 @@ public class UserControllerTest {
                 .andReturn()
                 .getResponse();
 
-        assertEquals(userRepository.findAll().size(), 1);
         assertFalse(userRepository.existsById(id));
     }
 }

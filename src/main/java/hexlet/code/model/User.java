@@ -10,13 +10,10 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.Instant;
 import java.util.Date;
 
 import static jakarta.persistence.TemporalType.TIMESTAMP;
@@ -29,29 +26,36 @@ import static jakarta.persistence.TemporalType.TIMESTAMP;
 @Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @EqualsAndHashCode.Exclude
     private Long id;
 
     @NotBlank
+    @EqualsAndHashCode.Include
     private String firstName;
 
     @NotBlank
+    @EqualsAndHashCode.Include
     private String lastName;
 
     @Column(unique = true)
+    @EqualsAndHashCode.Include
     private String email;
 
     @NotBlank
     @JsonIgnore
     @Size(min = 3, max = 100)
+    @EqualsAndHashCode.Exclude
     private String password;
 
     @CreationTimestamp
     @Temporal(TIMESTAMP)
-    private Date createdAt;
+    @EqualsAndHashCode.Exclude
+    private Instant createdAt;
     public User(final Long id) {
         this.id = id;
     }

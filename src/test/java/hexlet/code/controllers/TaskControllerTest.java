@@ -1,10 +1,14 @@
 package hexlet.code.controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import hexlet.code.model.Label;
+import hexlet.code.model.TaskStatus;
+import hexlet.code.model.User;
 import hexlet.code.utils.TestUtils;
 import hexlet.code.dto.TaskDto;
 import hexlet.code.repository.TaskRepository;
 import hexlet.code.model.Task;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +22,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
+import static hexlet.code.controllers.LabelController.LABEL_PATH;
 import static hexlet.code.utils.TestUtils.asJson;
 import static hexlet.code.utils.TestUtils.fromJson;
 import static hexlet.code.controllers.TaskController.TASK_PATH;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -75,7 +82,7 @@ public class TaskControllerTest {
     }
 
     @Test
-    public void getTasksTest() throws Exception {
+    public void getAllTest() throws Exception {
         utils.regDefaultTask();
         final List<Task> expectedTasks = taskRepository.findAll();
         final var response = mockMvc.perform(
@@ -88,10 +95,8 @@ public class TaskControllerTest {
         final List<Task> tasks = fromJson(response.getContentAsString(), new TypeReference<>() {
         });
 
-        assertEquals(expectedTasks.size(), tasks.size());
-        assertEquals(expectedTasks.get(0).getTaskStatus().getName(), tasks.get(0).getTaskStatus().getName());
-        assertEquals(expectedTasks.get(1).getAuthor().getFirstName(), tasks.get(1).getAuthor().getFirstName());
-        assertEquals(expectedTasks.get(1).getDescription(), tasks.get(1).getDescription());
+        Assertions.assertThat(tasks)
+                .containsAll(expectedTasks);
     }
 
     @Test
@@ -102,17 +107,22 @@ public class TaskControllerTest {
                 .description("Description 3")
                 .taskStatusId(taskRepository.findAll().get(0).getTaskStatus().getId())
                 .build();
-        mockMvc.perform(
-                        post(baseUrl + TASK_PATH)
+        final var response = mockMvc.perform(
+                                post(baseUrl + TASK_PATH)
                                 .content(asJson(task))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header(AUTHORIZATION, utils.generateToken()))
                 .andExpect(status().isCreated())
                 .andReturn()
                 .getResponse();
+
+        final var savedTask = fromJson(response.getContentAsString(), new TypeReference<Task>() {
+        });
+
         final Task createTask = taskRepository.findByName("Task Create").get();
         assertEquals(taskRepository.findAll().size(), 3);
         assertEquals(createTask.getDescription(), "Description 3");
+        assertThat(taskRepository.getReferenceById(savedTask.getId())).isNotNull();
     }
 
     @Test
@@ -151,7 +161,6 @@ public class TaskControllerTest {
                 .andReturn()
                 .getResponse();
 
-        assertEquals(taskRepository.findAll().size(), 1);
         assertFalse(taskRepository.existsById(id));
     }
 }

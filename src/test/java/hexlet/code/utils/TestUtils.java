@@ -74,9 +74,9 @@ public class TestUtils {
 
     public void regDefaultLabel() {
         Label label1 = new Label();
-        label1.setName("ASAP");
+        label1.setName("ASAP1");
         Label label2 = new Label();
-        label2.setName("A$AP");
+        label2.setName("A$AP2");
         regDefaultTask();
         labelRepository.save(label1);
         labelRepository.save(label2);
