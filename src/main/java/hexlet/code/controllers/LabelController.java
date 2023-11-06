@@ -68,7 +68,7 @@ public class LabelController {
         @ApiResponse(responseCode = "422", description = "Name label can not be empty")
     })
     @PutMapping(ID)
-    public Label update(@PathVariable final long id, @RequestBody final LabelDto labelDto) {
+    public Label update(@PathVariable final long id, @RequestBody @Valid final LabelDto labelDto) {
         return labelService.updateLabel(id, labelDto);
     }
 

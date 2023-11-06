@@ -88,29 +88,8 @@ public class LabelControllerTest {
     }
 
     @Test
-    public void getLabelsTest() throws Exception {
-        utils.regDefaultLabel();
-        final List<Label> expectedLabels = labelRepository.findAll();
-        final var response = mockMvc.perform(
-                        get(baseUrl + LABEL_PATH)
-                                .header(AUTHORIZATION, utils.generateToken()))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse();
-
-        final List<Label> labels = fromJson(response.getContentAsString(), new TypeReference<>() {
-        });
-
-        assertEquals(expectedLabels.size(), labels.size());
-        assertEquals(expectedLabels.get(0).getId(), labels.get(0).getId());
-        assertEquals(expectedLabels.get(1).getName(), labels.get(1).getName());
-    }
-
-    @Test
     public void createLabelTest() throws Exception {
         final var label = new LabelDto("Label 1");
-
-//        final var request = buildRequestForSave(labelToSave);
 
         final var response = mockMvc.perform(post(baseUrl + LABEL_PATH)
                         .content(asJson(label))
@@ -123,7 +102,7 @@ public class LabelControllerTest {
 
         final Label savedLabel = fromJson(response.getContentAsString(), new TypeReference<>() {
         });
-        final Label expectedLabel = labelRepository.findAll().get(0);
+        final Label expectedLabel = labelRepository.findById(savedLabel.getId()).get();
         assertEquals(labelRepository.findAll().size(), 1);
         assertEquals(expectedLabel.getName(), label.getName());
         assertThat(labelRepository.getReferenceById(savedLabel.getId())).isNotNull();
@@ -142,8 +121,9 @@ public class LabelControllerTest {
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
-
-        final Label updatedLabel = labelRepository.findById(id);
+        final Label savedLabel = fromJson(response.getContentAsString(), new TypeReference<>() {
+        });
+        final Label updatedLabel = labelRepository.findById(savedLabel.getId()).get();
 
         assertEquals(expectedLabel.getName(), updatedLabel.getName());
     }

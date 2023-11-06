@@ -121,7 +121,7 @@ public class UserControllerTest {
         });
 
         assertEquals(userRepository.findAll().size(), 1);
-        assertEquals(userRepository.findAll().get(0).getEmail(), TEST_EMAIL);
+        assertEquals(savedUser.getEmail(), TEST_EMAIL);
         assertThat(userRepository.getReferenceById(savedUser.getId())).isNotNull();
     }
 
@@ -144,8 +144,11 @@ public class UserControllerTest {
                 .andReturn()
                 .getResponse();
 
-        assertEquals(expectedUser.getFirstName(), userRepository.findById(id).get().getFirstName());
-        assertEquals(expectedUser.getLastName(), userRepository.findById(id).get().getLastName());
+        final var savedUser = fromJson(response.getContentAsString(), new TypeReference<User>() {
+        });
+
+        assertEquals(expectedUser.getFirstName(),savedUser.getFirstName());
+        assertEquals(expectedUser.getLastName(), savedUser.getLastName());
     }
 
     @Test

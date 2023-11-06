@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -42,7 +43,7 @@ public class TaskController {
         @ApiResponse(responseCode = "404", description = "Task not found")})
     @ResponseStatus(CREATED)
     @PostMapping()
-    public Task createNewTask(@RequestBody TaskDto taskDto) {
+    public Task createNewTask(@RequestBody @Valid TaskDto taskDto) {
         return taskService.createNewTask(taskDto);
     }
 
@@ -70,7 +71,7 @@ public class TaskController {
                             schema = @Schema(implementation = Task.class))}),
         @ApiResponse(responseCode = "400", description = "Bad request", content = @Content)})
     @PutMapping(path = ID)
-    public Task updateTask(@PathVariable(name = "id") Long id, @RequestBody TaskDto taskDto) {
+    public Task updateTask(@PathVariable(name = "id") Long id, @RequestBody @Valid TaskDto taskDto) {
         return taskService.updateTask(id, taskDto);
     }
 
