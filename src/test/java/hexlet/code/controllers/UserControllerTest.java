@@ -147,7 +147,7 @@ public class UserControllerTest {
         final var savedUser = fromJson(response.getContentAsString(), new TypeReference<User>() {
         });
 
-        assertEquals(expectedUser.getFirstName(),savedUser.getFirstName());
+        assertEquals(expectedUser.getFirstName(), savedUser.getFirstName());
         assertEquals(expectedUser.getLastName(), savedUser.getLastName());
     }
 
